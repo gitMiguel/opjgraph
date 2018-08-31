@@ -1,0 +1,30 @@
+;#################################################
+;#
+;# Configuration file for OPJGraph
+;#
+;#################################################
+
+[database] ; Database configuration
+
+dbhost = your.database.com:3306
+dbname = mydatabase
+dbuname = user1
+dbpw = verysecretpassword
+timetable = outdoortemp_001
+timecolumn = time
+
+[chart] ; Chart Configuration
+
+title = "Your title"
+sizev = 1000
+sizeh = 600
+showlegend = true
+legendcols = 4
+
+[items] ; Item configuration
+
+line[] = line:outdoortemp_001:blue:Outdoor temperature
+line[] = line:compressor_003:chocolate:Compressor temperature
+line[] = state:heatpump_012:green:Kitchen light
+
+;# Rememeber to remove ".empty" after the file name when you're ready.
