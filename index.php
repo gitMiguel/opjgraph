@@ -12,7 +12,7 @@
 <head>
     <?php include("scripts/dates.php"); ?>
     <script type="text/javascript"> var calendar = <?php echo json_encode($calendar); ?>; </script>
-    <script type="text/javascript" src="scripts/myopjgraph.js"> </script>
+    <script type="text/javascript" src="scripts/opjgraph.js"> </script>
 </head>
 
 <body onload="loadPicture('today')">
@@ -20,7 +20,7 @@
     <table align=center width=1000>
         <tr>
             <td align=center valign=middle colspan=2 bgcolor=lightgrey>
-                <h2>OPJgraph</h2></div>
+                <h2>OPJGraph</h2></div>
             </td>
         </tr>
         <tr>

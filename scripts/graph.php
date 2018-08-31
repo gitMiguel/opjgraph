@@ -7,9 +7,9 @@ require_once ('src/jpgraph_line.php');
 require_once ('src/jpgraph_date.php');
 include 'opjgraph.inc';
 
-$myopjgraph = new MyOPJGraph("opjgraph.ini");
-$chart = $myopjgraph->getChartConf();
-$items = $myopjgraph->getItems();
+$opjgraph = new OPJGraph("opjgraph.ini");
+$chart = $opjgraph->getChartConf();
+$items = $opjgraph->getItems();
 
 // Default chart generation is today
 $starttime = date("Y-m-d") . " 00:00:00";
@@ -69,11 +69,11 @@ $graph->yaxis->HideFirstTicklabel();
 $graph->ygrid->Show(true, true);
 
 // MySQL query and line creation
-$myopjgraph->connect();
+$opjgraph->connect();
 
 foreach ($items as $item) {
 	
-	$data = $myopjgraph->getItemData($item, $starttime, $endtime);
+	$data = $opjgraph->getItemData($item, $starttime, $endtime);
 
 	foreach ($data as $time => $value) {
 
@@ -88,13 +88,13 @@ foreach ($items as $item) {
 				$p->SetFillFromYMin(TRUE);
 				$p->SetStepStyle();		
 			}
-			$p->SetLegend($myopjgraph->getLegend($item, $istoday, $datay));	
+			$p->SetLegend($opjgraph->getLegend($item, $istoday, $datay));	
 		}
 	}
 	$graph->Add($p);
 	unset($data, $datax, $datay);
 }
-$myopjgraph->close();
+$opjgraph->close();
 $graph->Stroke();
 
 } catch (JpGraphException $jge) {

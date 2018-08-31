@@ -3,8 +3,8 @@ try {
 
 require_once 'opjgraph.inc';
 
-$myopjgraph = new MyOPJGraph('opjgraph.ini');
-$calendar = $myopjgraph->getDatesFromDb();
+$opjgraph = new OPJGraph('opjgraph.ini');
+$calendar = $opjgraph->getDatesFromDb();
 
 } catch (Exception $ex) {
 	//echo($ex);

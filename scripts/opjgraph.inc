@@ -1,6 +1,6 @@
 <?php
 
-class MyOPJGraph {
+class OPJGraph {
 
     private $dbconf,
             $chartconf,
@@ -116,7 +116,7 @@ class MyOPJGraph {
             $string .= sprintf("%01.1f", $istoday ? end($data) : (array_sum($data) / count(array_filter($data))));
             $string .= " &deg;C";
         } elseif ($item['type'] == 'state') { 
-            $string .= $istoday ? (end($data) ? "ON" : "OFF") : "Average not counted";
+            $string .= $istoday ? (end($data) ? "ON" : "OFF") : "Average not counted"; // TODO
         }
         return $string;
     }
