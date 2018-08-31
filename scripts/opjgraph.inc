@@ -75,8 +75,7 @@ class OPJGraph {
         $this->connection->close();
     }
 
-
-    # Construct MySQL query string
+    # Get item data from database
     function getItemData($item, $starttime, $endtime) {
         $query = "SELECT * FROM " . $item['name'] . " WHERE (time BETWEEN '" . $starttime . "' AND '" . $endtime . "')";
         $data = array();

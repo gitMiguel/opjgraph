@@ -24,7 +24,7 @@ As opjgraph.ini file contains your database username and password remember to se
 
 For example here's apaches configuration section to hide all .ini and .inc files:
 
-<Files *.in*>
+<Files \*.in\*>
     Order deny,allow
     Deny from all
-</Files>
+<\/Files>
