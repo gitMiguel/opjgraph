@@ -15,17 +15,19 @@ timecolumn = time               ;Column name for time values
 
 [chart] ; Chart Configuration
 
-title = Your title  ;Tile of your graph
-sizev = 1000        ;Vertical size of image
-sizeh = 600         ;Horizonal size of image
-showlegend = true   ;Wether to show legend box under chart
-legendcols = 4      ;How many columns to have in legend box
+title = Your title      ;Title of your graph
+sizev = 1000            ;Vertical size of image
+sizeh = 600             ;Horizonal size of image
+showlegend = true       ;Wether to show legend box under chart
+legendcols = 4          ;How many columns to have in legend box
+legendunit = "&deg;C"   ;Text/unit to display after value in legend box
+yaxistitle = "&deg;C"   ;Title for Y-axis
 
 [items] ; Item configuration
 
-line[] = line:outdoortemp_001:blue:Outdoor temperature  ;Item 1
-line[] = state:heatpump_012:green:Heat pump             ;Item 2
-line[] = state:switch1:red:Light switch                 ;Item 3
+line[] = "line:outdoortemp_001:blue:Outdoor temperature:&deg;C" ;Item 1
+line[] = state:heatpump_012:green:Heat pump                     ;Item 2
+line[] = state:switch1:red:Light switch                         ;Item 3
 
 ;Item 1: Line graph of item "outdoortemp_008" with blue line color and title "Outdoor temperature"
 

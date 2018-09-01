@@ -48,13 +48,16 @@ class OPJGraph {
             $i = 0;
             foreach ($value as $val) {
                 $item = explode(":", $val);
-        	    if (count($item) != 4 || (array_search("", $item) != false)) {
+        	    if (count($item) > 5 && count($item) < 4 || (array_search("", $item) != false)) {
 	            	throw new InvalidArgumentException ("Error in item settings.");
                 }
                 $this->items[$i]['type'] = $item[0];
                 $this->items[$i]['name'] = $item[1];
                 $this->items[$i]['color'] = $item[2];
                 $this->items[$i]['title'] = $item[3];
+                if (count($item) == 5) {
+                    $this->items[$i]['unit'] = $item[4];
+                }
                 $i++;
             }
         }
@@ -113,7 +116,7 @@ class OPJGraph {
         $string = $item['title'] . " ";
         if ($item['type'] == 'line') {
             $string .= sprintf("%01.1f", $istoday ? end($datay) : (array_sum($datay) / count(array_filter($datay))));
-            $string .= " &deg;C";
+            $string .= " " . $item['unit'];
         } elseif ($item['type'] == 'state') {
             $string .= $istoday ? (end($datay) ? "ON" : "OFF") : $this->calculateOnTime($data);
         }

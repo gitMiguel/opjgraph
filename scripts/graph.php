@@ -65,7 +65,7 @@ $graph->xaxis->scale->SetDateFormat('H:i');
 $graph->xaxis->scale->ticks->Set(60*60,30*60);
 
 // Y-axis
-$graph->yaxis->title->Set("&deg;C");
+$graph->yaxis->title->Set($chart['yaxistitle']);
 $graph->yaxis->HideFirstTicklabel();
 $graph->ygrid->Show(true, true);
 
