@@ -120,6 +120,7 @@ class OPJGraph {
         return $string;
     }
 
+    # Calculate ON time for state item
     function calculateOnTime($data) {
         $total = 0;
         $start = 0; 

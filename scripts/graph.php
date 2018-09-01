@@ -11,11 +11,6 @@ $opjgraph = new OPJGraph("opjgraph.ini");
 $chart = $opjgraph->getChartConf();
 $items = $opjgraph->getItems();
 
-// Default chart generation is today
-$starttime = date("Y-m-d") . " 00:00:00";
-$endtime = date("Y-m-d") . " 23:59:59";
-$istoday= true;
-
 // Get parameters
 if (!isset($_POST["period"])) {
 	$period = "today";
@@ -23,6 +18,7 @@ if (!isset($_POST["period"])) {
 } else {
 	$period = $_POST["period"];
 }
+
 if ($period == "last24h") {
 	$starttime = date("Y-m-d H:i:s", mktime(date("H")+1, 0, 0, date("m")  , date("d")-1, date("Y")));
 	$endtime = date("Y-m-d H:i:s", mktime(date("H")+1, 0, 0, date("m")  , date("d"), date("Y")));
@@ -33,6 +29,11 @@ if ($period == "last24h") {
 	$starttime = date("Y-m-d H:i:s", mktime(0, 0, 0, $time[1], $time[2], $time[0]));
 	$endtime = date("Y-m-d H:i:s", mktime(23, 59, 59, $time[1], $time[2], $time[0]));
 	$istoday = false;
+
+} else {
+	$starttime = date("Y-m-d") . " 00:00:00";
+	$endtime = date("Y-m-d") . " 23:59:59";
+	$istoday= true;
 }
 
 // New graph
@@ -68,7 +69,7 @@ $graph->yaxis->title->Set("&deg;C");
 $graph->yaxis->HideFirstTicklabel();
 $graph->ygrid->Show(true, true);
 
-// MySQL query and line creation
+// MySQL query and graph creation
 $opjgraph->connect();
 
 foreach ($items as $item) {
@@ -76,22 +77,21 @@ foreach ($items as $item) {
 	$data = $opjgraph->getItemData($item, $starttime, $endtime);
 
 	foreach ($data as $time => $value) {
-
 		$datax[] = $time;
 		$datay[] = $value;
-	
-		if ($datax && $datay) {
-			$p = new LinePlot($datay , $datax);
-			$p->SetColor($item['color']);
-			if ($item['type'] == 'state') {
-				$p->SetFillColor($item['color']);
-				$p->SetFillFromYMin(TRUE);
-				$p->SetStepStyle();		
-			}
-			$p->SetLegend($opjgraph->getLegend($item, $istoday, $datay));	
-		}
 	}
-	$graph->Add($p);
+	
+	if ($data) {
+		$p = new LinePlot($datay , $datax);
+		$p->SetColor($item['color']);
+		if ($item['type'] == 'state') {
+			$p->SetFillColor($item['color']);
+			$p->SetFillFromYMin(TRUE);
+			$p->SetStepStyle();		
+		}
+		$p->SetLegend($opjgraph->getLegend($item, $istoday, $datay, $data));
+		$graph->Add($p);		
+	}
 	unset($data, $datax, $datay);
 }
 $opjgraph->close();
@@ -100,9 +100,9 @@ $graph->Stroke();
 } catch (JpGraphException $jge) {
 	$jge->Stroke();
 } catch (Exception $ex) {
-	throw new JpGraphException($ex->getMessage());
+	throw new JpGraphException($ex);
 } catch (Error $er) {
-	throw new JpGraphException($er->getMessage());
+	throw new JpGraphException($er);
 }
 
 ?>

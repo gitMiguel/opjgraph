@@ -35,7 +35,7 @@
                 <select id="year" onchange="populateSelection('month', calendar[document.getElementById('year').value], selectedMonth);">
                     <option>Year</option>
                 </select>
-                <select id="month" onchange="populateSelection('day', calendar[document.getElementById('year').value][document.getElementById('month').value] selectedDay);">
+                <select id="month" onchange="populateSelection('day', calendar[document.getElementById('year').value][document.getElementById('month').value], selectedDay);">
                     <option>Month</option>
                 </select>
                 <select id="day" onchange="loadSelection()">
