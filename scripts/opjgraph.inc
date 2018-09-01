@@ -109,15 +109,33 @@ class OPJGraph {
     }
 
     # Construct legend string
-    function getLegend($item, $istoday, $data) {
+    function getLegend($item, $istoday, $datay, $data) {
         $string = $item['title'] . " ";
         if ($item['type'] == 'line') {
-            $string .= sprintf("%01.1f", $istoday ? end($data) : (array_sum($data) / count(array_filter($data))));
+            $string .= sprintf("%01.1f", $istoday ? end($datay) : (array_sum($datay) / count(array_filter($datay))));
             $string .= " &deg;C";
-        } elseif ($item['type'] == 'state') { 
-            $string .= $istoday ? (end($data) ? "ON" : "OFF") : "Average not counted"; // TODO
+        } elseif ($item['type'] == 'state') {
+            $string .= $istoday ? (end($datay) ? "ON" : "OFF") : $this->calculateOnTime($data);
         }
         return $string;
+    }
+
+    function calculateOnTime($data) {
+        $total = 0;
+        $start = 0; 
+        $end = 0;
+        foreach ($data as $time => $value) {
+            if (($value > 0) && ($start == 0) && ($end == 0)) {
+                $start = $time;
+            } elseif (($value < 1) && ($start > 0) && ($end < 1)) {
+                $end = $time;
+            } elseif (($start > 0) && ($end > 0)) {
+                $total += $end - $start;
+                $start = 0;
+                $end = 0;
+            }
+        }
+        return gmdate("H:i:s", $total);
     }
 }
 
