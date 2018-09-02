@@ -5,12 +5,10 @@ var selectedDay = new Date().getDate();
 
 function loadPicture(time) {
     var xmlhttp = new XMLHttpRequest();
-    var url = "scripts/graph.php";
-    var params = 'period=' + time;
+    var url = "scripts/graph.php?period=" + time;
 
-    xmlhttp.open("POST",url,true);
+    xmlhttp.open("GET",url,true);
     xmlhttp.responseType = 'arraybuffer';
-    xmlhttp.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
     xmlhttp.onload = function() {
         var arrayBufferView = new Uint8Array( this.response );
         var blob = new Blob( [ arrayBufferView ], { type: "image/jpeg" } );
@@ -19,7 +17,7 @@ function loadPicture(time) {
         var img = document.querySelector( "#graph" );
         img.src = imageUrl;
     };
-    xmlhttp.send(params);
+    xmlhttp.send();
 
     populateSelections();
 }

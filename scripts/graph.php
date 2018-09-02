@@ -12,11 +12,11 @@ $chart = $opjgraph->getChartConf();
 $items = $opjgraph->getItems();
 
 // Get parameters
-if (!isset($_POST["period"])) {
+if (!isset($_GET["period"])) {
 	$period = "today";
 	$istoday = true;
 } else {
-	$period = $_POST["period"];
+	$period = $_GET["period"];
 }
 
 if ($period == "last24h") {
@@ -51,7 +51,7 @@ $graph->legend->SetPos(0.05,0.84,'left','top');
 $graph->legend->SetColumns($chart['legendcols']);
 
 // Title 
-$graph->title->Set($chart['title'] . " " . date("Y.m.d", strtotime($endtime)));
+$graph->title->Set($chart['title']); // . " " . date("Y.m.d", strtotime($endtime)));
 $graph->title->SetFont(FF_DV_SERIF, FS_BOLD, 14);
 $graph->title->SetMargin(10);
 

@@ -22,6 +22,8 @@ showlegend = true       ;Wether to show legend box under chart
 legendcols = 4          ;How many columns to have in legend box
 legendunit = "&deg;C"   ;Text/unit to display after value in legend box
 yaxistitle = "&deg;C"   ;Title for Y-axis
+;drawtofile = "graph.png";Draw to a specified file in /scripts directory.
+                        ;Leave empty to draw in browser
 
 [items] ; Item configuration
 
