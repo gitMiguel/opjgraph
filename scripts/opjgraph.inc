@@ -9,6 +9,7 @@ class OPJGraph {
 
     public function __construct($filename) {
         $this->parseConfig($filename);
+        $this->connect();
     }
 
     # Return chart configuration
@@ -36,9 +37,6 @@ class OPJGraph {
         }
 
         foreach ($config['chart'] as $key => $value) {
-            if (empty($value)){
-                throw new InvalidArgumentException ("Error in chart settings.");
-            }
             $this->chartconf[$key] = $value;       
         }
         foreach ($config['items'] as $value) {
@@ -97,7 +95,6 @@ class OPJGraph {
 
     # Fetch distinct dates from MySQL and return multidimesional array of dates
     function getDatesFromDb() {
-        $this->connect();
         $query = "SELECT DISTINCT YEAR(time) AS year, MONTH(time) AS month, DAY(time) AS day FROM " . $this->dbconf['timetable'];
         $calendar = array();
     
@@ -107,7 +104,6 @@ class OPJGraph {
 	    	}
 	    	$result->free();
         }
-        $this->close();
         return $calendar;
     }
 

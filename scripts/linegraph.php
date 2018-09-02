@@ -5,9 +5,10 @@ try {
 require_once ('src/jpgraph.php');
 require_once ('src/jpgraph_line.php');
 require_once ('src/jpgraph_date.php');
-include 'opjgraph.inc';
+require_once ('opjgraph.inc');
 
-$opjgraph = new OPJGraph("opjgraph.ini");
+$opjgraph = new OPJGraph('../config/line.opjgraph.ini');
+
 $chart = $opjgraph->getChartConf();
 $items = $opjgraph->getItems();
 
@@ -70,8 +71,6 @@ $graph->yaxis->HideFirstTicklabel();
 $graph->ygrid->Show(true, true);
 
 // MySQL query and graph creation
-$opjgraph->connect();
-
 foreach ($items as $item) {
 	
 	$data = $opjgraph->getItemData($item, $starttime, $endtime);
@@ -94,8 +93,13 @@ foreach ($items as $item) {
 	}
 	unset($data, $datax, $datay);
 }
-$opjgraph->close();
-$graph->Stroke();
+
+if ($chart['drawtofile']) {
+	$graph->Stroke($chart['drawtofile']);
+} else {
+	$graph->Stroke();
+}
+
 
 } catch (JpGraphException $jge) {
 	$jge->Stroke();

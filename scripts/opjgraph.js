@@ -3,9 +3,15 @@ var selectedYear = new Date().getFullYear();
 var selectedMonth = new Date().getMonth() + 1;
 var selectedDay = new Date().getDate();
 
+window.onload = start();
+
+function start() {
+    populateSelections();
+}
+
 function loadPicture(time) {
     var xmlhttp = new XMLHttpRequest();
-    var url = "scripts/graph.php?period=" + time;
+    var url = "scripts/linegraph.php?period=" + time;
 
     xmlhttp.open("GET",url,true);
     xmlhttp.responseType = 'arraybuffer';

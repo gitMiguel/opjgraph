@@ -1,2 +1,3 @@
-opjgraph.ini
+*.ini
 .vscode
+*.png
