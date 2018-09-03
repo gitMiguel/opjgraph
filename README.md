@@ -11,6 +11,7 @@
 
 - View charts as images directly in your browser. 
 - Use graph.php to create images for current day and display them in your sitemap.
+- Draw graph to file. eg "graph.png". In this case the process running php/web server needs rights in "/scripts" folder.
 
 
 ## Configuration
