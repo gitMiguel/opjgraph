@@ -1,7 +1,7 @@
 <?php
 try {
 
-require_once 'opjgraph.inc';
+require_once ('opjgraph.inc');
 
 $opjgraph = new OPJGraph('opjgraph.ini');
 $calendar = $opjgraph->getDatesFromDb();

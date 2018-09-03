@@ -5,9 +5,9 @@ try {
 require_once ('src/jpgraph.php');
 require_once ('src/jpgraph_line.php');
 require_once ('src/jpgraph_date.php');
-include 'opjgraph.inc';
+require_once ('opjgraph.inc');
 
-$opjgraph = new OPJGraph("opjgraph.ini");
+$opjgraph = new OPJGraph('opjgraph.ini');
 $chart = $opjgraph->getChartConf();
 $items = $opjgraph->getItems();
 
@@ -40,11 +40,11 @@ if ($period == "last24h") {
 $graph = new Graph($chart['sizev'], $chart['sizeh']);
 $graph->clearTheme();
 $graph->SetScale('datlin',0,90);
-$graph->SetMargin(50,50,50,($chart['legend'] == 'show' ? 130 : 50));
+$graph->SetMargin(50,50,50,($chart['showlegend'] ? 130 : 50));
 $graph->img->SetAntiAliasing(false);
 
 // Legend
-if ($chart['legend'] == 'hide') {
+if (!$chart['showlegend']) {
 	$graph->legend->Hide();
 }
 $graph->legend->SetPos(0.05,0.84,'left','top');
@@ -70,8 +70,6 @@ $graph->yaxis->HideFirstTicklabel();
 $graph->ygrid->Show(true, true);
 
 // MySQL query and graph creation
-$opjgraph->connect();
-
 foreach ($items as $item) {
 	
 	$data = $opjgraph->getItemData($item, $starttime, $endtime);
@@ -94,8 +92,12 @@ foreach ($items as $item) {
 	}
 	unset($data, $datax, $datay);
 }
-$opjgraph->close();
-$graph->Stroke();
+
+if ($chart['drawtofile']) {
+	$graph->Stroke($chart['drawtofile']);
+} else {
+	$graph->Stroke();
+}
 
 } catch (JpGraphException $jge) {
 	$jge->Stroke();
