@@ -7,7 +7,7 @@ require_once ('src/jpgraph_line.php');
 require_once ('src/jpgraph_date.php');
 require_once ('opjgraph.inc');
 
-$opjgraph = new OPJGraph('../config/line.opjgraph.ini');
+$opjgraph = new OPJGraph('../config/line.ini');
 
 $chart = $opjgraph->getChartConf();
 $items = $opjgraph->getItems();
@@ -41,11 +41,11 @@ if ($period == "last24h") {
 $graph = new Graph($chart['sizev'], $chart['sizeh']);
 $graph->clearTheme();
 $graph->SetScale('datlin',0,90);
-$graph->SetMargin(50,50,50,($chart['legend'] == 'show' ? 130 : 50));
+$graph->SetMargin(50,50,50,($chart['showlegend'] ? 130 : 50));
 $graph->img->SetAntiAliasing(false);
 
 // Legend
-if ($chart['legend'] == 'hide') {
+if (!$chart['showlegend']) {
 	$graph->legend->Hide();
 }
 $graph->legend->SetPos(0.05,0.84,'left','top');

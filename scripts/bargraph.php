@@ -6,13 +6,13 @@ require_once ('src/jpgraph.php');
 require_once ('src/jpgraph_bar.php');
 require_once ('opjgraph.inc');
  
-$opjgraph = new OPJGraph('../config/bar.opjgraph.ini');
+$opjgraph = new OPJGraph('../config/bar.ini');
 
 $chart = $opjgraph->getChartConf();
 $items = $opjgraph->getItems();
 
-$starttime = date("Y-m-d H:i:s", 0, 0, 0, date("m")  , date("d")-8, date("Y"));
-$endtime = date("Y-m-d H:i:s", 23, 59, 59, date("m")  , date("d")-1, date("Y"));
+$starttime = date("Y-m-d H:i:s", mktime(0, 0, 0, date("m")  , date("d")-8, date("Y")));
+$endtime = date("Y-m-d H:i:s", mktime(23, 59, 59, date("m")  , date("d")-1, date("Y")));
 
 // New graph
 $graph = new Graph($chart['sizev'], $chart['sizeh']);

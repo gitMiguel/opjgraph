@@ -3,7 +3,7 @@ try {
 
 require_once ('opjgraph.inc');
 
-$opjgraph = new OPJGraph('./config/line.opjgraph.ini');
+$opjgraph = new OPJGraph('./config/line.ini');
 $calendar = $opjgraph->getDatesFromDb();
 
 } catch (Exception $ex) {
