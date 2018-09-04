@@ -63,7 +63,7 @@ class OPJGraph {
         $connection = new mysqli($this->dbconf['dbhost'], $this->dbconf['dbuname'],
                                        $this->dbconf['dbpw'], $this->dbconf['dbname']);
         if ($connection->connect_errno) {
-            throw new Exception($connection->connect_error);
+            throw new Exception ($connection->connect_error);
         }
         return $connection;
     }
@@ -74,15 +74,12 @@ class OPJGraph {
     }
 
     # Get item data from database
-    function getItemData($item, $params, $starttime, $endtime) {
+    function getItemData($item,  $starttime, $endtime) {
         $query = "SELECT * FROM " . $item . " WHERE (time BETWEEN '" . $starttime . "' AND '" . $endtime . "')";
         $data = array();
 
 	    if ($result = $this->connection->query($query)) {
 		    while($row = $result->fetch_assoc()){
-                if ($params['type'] == 'state' && $row['value'] > 0) {
-			    	$row['value']++;
-			    }
 			    $data[strtotime($row["time"])] = $row["value"];
 		    }
 		    $result->free();
@@ -105,7 +102,7 @@ class OPJGraph {
     }
 
     # Construct legend string
-    function getLegend($params, $istoday, $data) {
+    function createLegend($params, $istoday, $data) {
         $values = array_values($data);
         $string = $params['title'] . " ";
         if ($params['type'] == 'line') {

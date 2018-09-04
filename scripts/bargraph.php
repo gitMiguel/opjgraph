@@ -8,53 +8,56 @@ require_once ('opjgraph.inc');
  
 $opjgraph = new OPJGraph('../config/bar.ini');
 
-$chart = $opjgraph->getChartConf();
-$items = $opjgraph->getItems();
+$charts = $opjgraph->getChartConfs();
 
-$starttime = date("Y-m-d H:i:s", mktime(0, 0, 0, date("m")  , date("d")-8, date("Y")));
+$starttime = date("Y-m-d H:i:s", mktime(0, 0, 0, date("m")  , date("d")-7, date("Y")));
 $endtime = date("Y-m-d H:i:s", mktime(23, 59, 59, date("m")  , date("d")-1, date("Y")));
 
-// New graph
-$graph = new Graph($chart['sizev'], $chart['sizeh']);
-$graph->SetScale('textlin');
- 
-$graph->SetMargin(50,50,50,50);
- 
-// Create a bar pot
-$bplot = new BarPlot($datay);
- 
-// Title
-$graph->title->Set($chart['title']);
-$graph->title->SetFont(FF_DV_SERIF, FS_BOLD, 14);
- 
-// MySQL query and graph creation
-foreach ($items as $item) {
-	
-	$data = $opjgraph->getItemData($item, $starttime, $endtime);
+$plotarray = array();
+foreach ($charts as $chart) {
 
-	foreach ($data as $time => $value) {
-		$datax[] = $time;
-		$datay[] = $value;
-	}
+	$graph = new Graph($chart['sizev'], $chart['sizeh']);
+	$graph->clearTheme();
+	$graph->SetScale('textlin');
+	$graph->SetMargin(50,50,50,80);
+ 
+	// Legend
+	$graph->legend->SetPos(0.33,0.91,'left','top');
+	$graph->legend->SetColumns($chart['legendcols']);
+
+	// Title
+	$graph->title->Set($chart['title']);
+	$graph->title->SetFont(FF_DV_SERIF, FS_BOLD, 14);
+ 
+	// Y-Axis
+	$graph->yaxis->title->Set($chart['yaxistitle']);
+
+	// MySQL query and graph creation
+	foreach ($chart['items'] as $item => $params) {
 	
-	if ($data) {
-		$p = new LinePlot($datay , $datax);
-		$p->SetColor($item['color']);
-		if ($item['type'] == 'state') {
-			$p->SetFillColor($item['color']);
-			$p->SetFillFromYMin(TRUE);
-			$p->SetStepStyle();		
+		$data = $opjgraph->getItemData($item, $starttime, $endtime);
+
+		foreach ($data as $time => $value) {
+			$days[date("d.m", $time)][] = $value;
 		}
-		$p->SetLegend($opjgraph->getLegend($item, $istoday, $datay, $data));
-		$graph->Add($p);		
+		foreach ($days as $day => $value) {
+			$values = array_values($value);
+			$average = array_sum($values) / count(array_filter($values));
+			$datay[] = $average;
+			$datax[] = $day;
+		}
+		//print_r($datax);
+	
+		if ($data) {
+			$b = new BarPlot($datay);
+			$b->SetFillColor($params['color']);
+			$b->SetLegend($params['title']);
+			$plotarray[] = $b;		
+		}
+		unset($data, $datay, $datax, $days, $values, $averages);
 	}
-	unset($data, $datax, $datay);
+	
 }
-
-$bplot->SetFillColor('orange');
-
-$plotgroup;
-
 
 $gbarplot = new  GroupBarPlot($plotarray);
 $graph->Add($gbarplot);

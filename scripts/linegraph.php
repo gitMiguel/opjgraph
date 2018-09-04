@@ -39,6 +39,7 @@ if ($period == "last24h") {
 
 foreach ($charts as $chart) {
 	
+	//New graph
 	$graph = new Graph($chart['sizev'], $chart['sizeh']);
 	$graph->clearTheme();
 	$graph->SetScale('datlin',0,90);
@@ -74,11 +75,14 @@ foreach ($charts as $chart) {
 	// MySQL query and graph creation
 	foreach ($chart['items'] as $item => $params) {
 
-		$data = $opjgraph->getItemData($item, $params, $starttime, $endtime);
+		$data = $opjgraph->getItemData($item, $starttime, $endtime);
 
 		foreach ($data as $time => $value) {
 			$datax[] = $time;
-			$datay[] = $value;
+			if ($params['type'] == 'state' && $value > 0) {
+				$value++;
+			}
+			$datay[] = $value;			
 		}
 	
 		if ($data) {
@@ -89,7 +93,7 @@ foreach ($charts as $chart) {
 				$p->SetFillFromYMin(TRUE);
 				$p->SetStepStyle();		
 			}
-			$p->SetLegend($opjgraph->getLegend($params, $istoday, $data));
+			$p->SetLegend($opjgraph->createLegend($params, $istoday, $data));
 			$graph->Add($p);		
 		}
 		unset($data, $datax, $datay);
