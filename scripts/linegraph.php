@@ -5,12 +5,12 @@ try {
 require_once ('src/jpgraph.php');
 require_once ('src/jpgraph_line.php');
 require_once ('src/jpgraph_date.php');
+require_once ('src/jpgraph_mgraph.php');
 require_once ('opjgraph.inc');
 
 $opjgraph = new OPJGraph('../config/line.ini');
 
-$chart = $opjgraph->getChartConf();
-$items = $opjgraph->getItems();
+$charts = $opjgraph->getChartConfs();
 
 // Get parameters
 if (!isset($_GET["period"])) {
@@ -37,67 +37,84 @@ if ($period == "last24h") {
 	$istoday= true;
 }
 
-// New graph
-$graph = new Graph($chart['sizev'], $chart['sizeh']);
-$graph->clearTheme();
-$graph->SetScale('datlin',0,90);
-$graph->SetMargin(50,50,50,($chart['showlegend'] ? 130 : 50));
-$graph->img->SetAntiAliasing(false);
-
-// Legend
-if (!$chart['showlegend']) {
-	$graph->legend->Hide();
-}
-$graph->legend->SetPos(0.05,0.84,'left','top');
-$graph->legend->SetColumns($chart['legendcols']);
-
-// Title 
-$graph->title->Set($chart['title']); // . " " . date("Y.m.d", strtotime($endtime)));
-$graph->title->SetFont(FF_DV_SERIF, FS_BOLD, 14);
-$graph->title->SetMargin(10);
-
-// X-axis
-if ($period != "last24h") {
-	$graph->xaxis->scale->SetDateAlign( DAYADJ_1 );
-} else {
-	$graph->xaxis->scale->SetTimeAlign( HOURADJ_1 );
-}
-$graph->xaxis->scale->SetDateFormat('H:i');
-$graph->xaxis->scale->ticks->Set(60*60,30*60);
-
-// Y-axis
-$graph->yaxis->title->Set($chart['yaxistitle']);
-$graph->yaxis->HideFirstTicklabel();
-$graph->ygrid->Show(true, true);
-
-// MySQL query and graph creation
-foreach ($items as $item) {
+foreach ($charts as $chart) {
 	
-	$data = $opjgraph->getItemData($item, $starttime, $endtime);
+	$graph = new Graph($chart['sizev'], $chart['sizeh']);
+	$graph->clearTheme();
+	$graph->SetScale('datlin',0,90);
+	$graph->SetMargin(50,50,50,($chart['showlegend'] ? 130 : 50));
+	$graph->img->SetAntiAliasing(false);
 
-	foreach ($data as $time => $value) {
-		$datax[] = $time;
-		$datay[] = $value;
+	// Legend
+	if (!$chart['showlegend']) {
+		$graph->legend->Hide();
 	}
-	
-	if ($data) {
-		$p = new LinePlot($datay , $datax);
-		$p->SetColor($item['color']);
-		if ($item['type'] == 'state') {
-			$p->SetFillColor($item['color']);
-			$p->SetFillFromYMin(TRUE);
-			$p->SetStepStyle();		
+	$graph->legend->SetPos(0.05,0.84,'left','top');
+	$graph->legend->SetColumns($chart['legendcols']);
+
+	// Title 
+	$graph->title->Set($chart['title']); // . " " . date("Y.m.d", strtotime($endtime)));
+	$graph->title->SetFont(FF_DV_SERIF, FS_BOLD, 14);
+	$graph->title->SetMargin(10);
+
+	// X-axis
+	if ($period != "last24h") {
+		$graph->xaxis->scale->SetDateAlign( DAYADJ_1 );
+	} else {
+		$graph->xaxis->scale->SetTimeAlign( HOURADJ_1 );
+	}
+	$graph->xaxis->scale->SetDateFormat('H:i');
+	$graph->xaxis->scale->ticks->Set(60*60,30*60);
+
+	// Y-axis
+	$graph->yaxis->title->Set($chart['yaxistitle']);
+	$graph->yaxis->HideFirstTicklabel();
+	$graph->ygrid->Show(true, true);
+
+	// MySQL query and graph creation
+	foreach ($chart['items'] as $item => $params) {
+
+		$data = $opjgraph->getItemData($item, $params, $starttime, $endtime);
+
+		foreach ($data as $time => $value) {
+			$datax[] = $time;
+			$datay[] = $value;
 		}
-		$p->SetLegend($opjgraph->getLegend($item, $istoday, $datay, $data));
-		$graph->Add($p);		
+	
+		if ($data) {
+			$p = new LinePlot($datay , $datax);
+			$p->SetColor($params['color']);
+			if ($params['type'] == 'state') {
+				$p->SetFillColor($params['color']);
+				$p->SetFillFromYMin(TRUE);
+				$p->SetStepStyle();		
+			}
+			$p->SetLegend($opjgraph->getLegend($params, $istoday, $data));
+			$graph->Add($p);		
+		}
+		unset($data, $datax, $datay);
 	}
-	unset($data, $datax, $datay);
+
+	if ($chart['drawtofile']) {
+		$graph->Stroke($chart['drawtofile']);
+	} else {
+		$graphs[] = $graph;
+	}
 }
 
-if ($chart['drawtofile']) {
-	$graph->Stroke($chart['drawtofile']);
-} else {
-	$graph->Stroke();
+if (count($graphs) == 1) {
+	$graphs[0]->Stroke();
+} elseif (count($graphs) > 1) {
+	$mgraph = new MGraph();
+	$yoffset = 0;
+	$i = 0;
+	for($i = 0; $i < count($graphs); ++$i) {
+		$mgraph->AddMix($graphs[$i],0,$yoffset);
+		$yoffset += $chart['sizeh'];
+	}
+	$mgraph->Stroke();
+} elseif (count($graphs) == 0) {
+	throw new JpGraphException("No charts drawn. Check configuration");
 }
 
 
