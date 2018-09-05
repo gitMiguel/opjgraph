@@ -1,0 +1,24 @@
+;/*
+; * OPJGraph - Easy charts for openHAB and MySQL
+; *
+; * @lastmodified   Wed Sep 05 2018
+; * @license        The MIT License (MIT). See LICENSE.txt
+; * @author         Miika Jukka <miikajukka@gmail.com>
+; * @version        0.1
+; */
+
+[chart1]
+
+title = Your title
+sizev = 1000
+sizeh = 600
+showlegend = true
+legendcols = 4
+legendunit = "&deg;C"
+yaxistitle = "&deg;C"
+drawtofile = false
+
+items[item1] = "color:title"
+items[item2] = "color:title"
+
+;# Rememeber to remove ".empty" after the file name when you're ready.

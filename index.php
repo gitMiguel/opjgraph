@@ -49,5 +49,10 @@
             <img id="graph"/>
         </td>
     </table>
+    <table border=0 align=center valign=middle>
+        <td>
+            <img src="scripts/bargraph.php"/>
+        </td>
+    </table>
 </body>
 </html>

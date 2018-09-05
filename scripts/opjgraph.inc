@@ -1,25 +1,30 @@
 <?php
+/*
+ * OPJGraph - Easy charts for openHAB and MySQL
+ *
+ * @lastmodified   Wed Sep 05 2018
+ * @license        The MIT License (MIT). See LICENSE.txt
+ * @author         Miika Jukka <miikajukka@gmail.com>
+ * @version        0.1
+ */
 
 class OPJGraph {
 
     private $dbconf,
-            $chartconf,
-            $items,
+            $charts,
             $connection;
 
-    public function __construct($filename) {
-        $this->parseConfig($filename);
-        $this->connect();
+    public function __construct($database, $chartsconf) {
+        $this->parseConfig($database);
+        if ($chartsconf) {
+            $this->parseConfig($chartsconf);
+        }
+        $this->connection = $this->connect();
     }
 
-    # Return chart configuration
-    public function getChartConf() {
-        return $this->chartconf;
-    }
-
-    # Return list of items
-    public function getItems() {
-        return $this->items;
+    # Return chart configurations
+    public function getChartConfs() {
+        return $this->charts;
     }
 
     # Parse configuration file
@@ -28,64 +33,55 @@ class OPJGraph {
         if (!$config) {
             throw new Exception ("Error reading configuration file");
         }
-
-        foreach ($config['database'] as $key => $value) {
-            if (empty($value)){
-                throw new InvalidArgumentException ("Error in database settings.");
-            }
-            $this->dbconf[$key] = $value;       
-        }
-
-        foreach ($config['chart'] as $key => $value) {
-            $this->chartconf[$key] = $value;       
-        }
-        foreach ($config['items'] as $value) {
-            if (empty($value)){
-                throw new InvalidArgumentException ("Error in item settings.");
-            }
-            $i = 0;
-            foreach ($value as $val) {
-                $item = explode(":", $val);
-        	    if (count($item) > 5 && count($item) < 4 || (array_search("", $item) != false)) {
-	            	throw new InvalidArgumentException ("Error in item settings.");
+        foreach ($config as $confsection => $value) {
+            if ($confsection == 'database') {
+                foreach ($value as $key => $value) {
+                    if (empty($value)){
+                        throw new InvalidArgumentException ("Error in database settings. Missing value for " . $key);
+                    }
+                    $this->dbconf[$key] = $value;
                 }
-                $this->items[$i]['type'] = $item[0];
-                $this->items[$i]['name'] = $item[1];
-                $this->items[$i]['color'] = $item[2];
-                $this->items[$i]['title'] = $item[3];
-                if (count($item) == 5) {
-                    $this->items[$i]['unit'] = $item[4];
+            } elseif (preg_match("/\bchart.\b/", $confsection)) {
+                foreach ($value as $key => $value) {
+                    if (is_array($value)) {
+                        foreach($value as $name => $value) {
+                            //var_dump($name);
+                            $values = explode(":", $value);
+                            if (count($values) > 4 || count($values) < 3 || (array_search("", $values) != false)) {
+                                throw new InvalidArgumentException ("Error in item settings.");
+                            }
+                            $this->charts[$confsection][$key][$name]['type'] = $values[0];
+                            $this->charts[$confsection][$key][$name]['color'] = $values[1];
+                            $this->charts[$confsection][$key][$name]['title'] = $values[2];
+                            if (count($values) == 4) {
+                                $this->charts[$confsection][$key][$name]['unit'] = $values[3];
+                            }
+                        }
+                    } else {
+                        $this->charts[$confsection][$key] = $value;
+                    }
                 }
-                $i++;
             }
         }
     }
 
     # Create MySQL connection
     function connect() {
-        $connection = new mysqli($this->dbconf['dbhost'], $this->dbconf['dbuname'],
-                                       $this->dbconf['dbpw'], $this->dbconf['dbname']);
+        $connection = new mysqli($this->dbconf['host'], $this->dbconf['uname'],
+                                       $this->dbconf['pw'], $this->dbconf['name']);
         if ($connection->connect_errno) {
-            throw new Exception($connection->connect_error);
+            throw new Exception ($connection->connect_error);
         }
-        $this->connection = $connection;
-    }
-
-    # Close MySQL connection
-    public function close() {
-        $this->connection->close();
+        return $connection;
     }
 
     # Get item data from database
-    function getItemData($item, $starttime, $endtime) {
-        $query = "SELECT * FROM " . $item['name'] . " WHERE (time BETWEEN '" . $starttime . "' AND '" . $endtime . "')";
+    function getItemData($item,  $starttime, $endtime) {
+        $query = "SELECT * FROM " . $item . " WHERE (time BETWEEN '" . $starttime . "' AND '" . $endtime . "')";
         $data = array();
 
 	    if ($result = $this->connection->query($query)) {
 		    while($row = $result->fetch_assoc()){
-                if ($item['type'] == 'state' && $row['value'] > 0) {
-			    	$row['value']++;
-			    }
 			    $data[strtotime($row["time"])] = $row["value"];
 		    }
 		    $result->free();
@@ -108,13 +104,14 @@ class OPJGraph {
     }
 
     # Construct legend string
-    function getLegend($item, $istoday, $datay, $data) {
-        $string = $item['title'] . " ";
-        if ($item['type'] == 'line') {
-            $string .= sprintf("%01.1f", $istoday ? end($datay) : (array_sum($datay) / count(array_filter($datay))));
-            $string .= " " . $item['unit'];
-        } elseif ($item['type'] == 'state') {
-            $string .= $istoday ? (end($datay) ? "ON" : "OFF") : $this->calculateOnTime($data);
+    function createLegend($params, $istoday, $data) {
+        $values = array_values($data);
+        $string = $params['title'] . " ";
+        if ($params['type'] == 'line') {
+            $string .= sprintf("%01.1f", $istoday ? end($values) : (array_sum($values) / count(array_filter($values))));
+            $string .= " " . $params['unit'];
+        } elseif ($params['type'] == 'state') {
+            $string .= $istoday ? (end($values) ? "ON" : "OFF") : $this->calculateOnTime($data);
         }
         return $string;
     }
@@ -123,20 +120,15 @@ class OPJGraph {
     function calculateOnTime($data) {
         $total = 0;
         $start = 0; 
-        $end = 0;
         foreach ($data as $time => $value) {
-            if (($value > 0) && ($start == 0) && ($end == 0)) {
+            if (($value > 0) && ($start == 0)) {
                 $start = $time;
-            } elseif (($value < 1) && ($start > 0) && ($end < 1)) {
-                $end = $time;
-            } elseif (($start > 0) && ($end > 0)) {
-                $total += $end - $start;
+            } elseif (($value < 1) && ($start > 0)) {
+                $total += $time - $start;
                 $start = 0;
-                $end = 0;
             }
         }
         return gmdate("H:i:s", $total);
     }
 }
-
 ?>
