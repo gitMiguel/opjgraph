@@ -38,9 +38,6 @@ foreach ($charts as $chart) {
 	// Title
 	$graph->title->Set($chart['title']);
 	$graph->title->SetFont(FF_DV_SERIF, FS_BOLD, 14);
- 
-	// Y-Axis
-	$graph->yaxis->title->Set($chart['yaxistitle']);
 
 	// MySQL query and graph creation
 	foreach ($chart['items'] as $item => $params) {
@@ -50,6 +47,7 @@ foreach ($charts as $chart) {
 		foreach ($data as $time => $value) {
 			$days[date("d.m", $time)][] = $value;
 		}
+		//print_r($days);
 		foreach ($days as $day => $value) {
 			$values = array_values($value);
 			$average = array_sum($values) / count(array_filter($values));
@@ -60,10 +58,16 @@ foreach ($charts as $chart) {
 			$b = new BarPlot($datay);
 			$b->SetFillColor($params['color']);
 			$b->SetLegend($params['title']);
+			$b->value->Show();
+			$b->SetValuePos('max');
 			$plotarray[] = $b;		
 		}
-		unset($data, $datay, $datax, $days, $values, $averages);
-	}	
+		unset($data, $datay, $days, $values, $averages);
+	}
+	
+	// Y- and X-axis
+	$graph->yaxis->title->Set($chart['yaxistitle']); 
+	$graph->xaxis->SetTickLabels($datax);
 }
 
 $gbarplot = new  GroupBarPlot($plotarray);
