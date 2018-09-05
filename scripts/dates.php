@@ -1,6 +1,6 @@
 <?php
 /*
- * OPJGraph Easy charts for openHAB and MySQL
+ * OPJGraph - Easy charts for openHAB and MySQL
  *
  * @lastmodified   Wed Sep 05 2018
  * @license        The MIT License (MIT). See LICENSE.txt

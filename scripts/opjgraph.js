@@ -3,11 +3,6 @@ var selectedYear = new Date().getFullYear();
 var selectedMonth = new Date().getMonth() + 1;
 var selectedDay = new Date().getDate();
 
-window.onload = start();
-
-function start() {
-    populateSelections();
-}
 
 function loadPicture(time) {
     var xmlhttp = new XMLHttpRequest();
@@ -60,4 +55,3 @@ function populateSelection(selection, options, selectedValue) {
     }
     document.getElementById(selection).value = selectedValue;
 }
-

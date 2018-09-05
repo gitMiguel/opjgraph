@@ -1,12 +1,11 @@
 ;/*
-; * OPJGraph Easy charts for openHAB and MySQL
+; * OPJGraph - Easy charts for openHAB and MySQL
 ; *
 ; * @lastmodified   Wed Sep 05 2018
 ; * @license        The MIT License (MIT). See LICENSE.txt
 ; * @author         Miika Jukka <miikajukka@gmail.com>
 ; * @version        0.1
 ; */
-
 
 [chart1]
 
@@ -16,19 +15,10 @@ sizeh = 600
 showlegend = true
 legendcols = 4
 legendunit = "&deg;C"
-yaxistitle = "&deg;C"
+yaxistitle = "Celsius"
 drawtofile = false
 
-items[outdoortemp_001] = "line:blue:Outdoor temperature:&deg;C"
-items[heatpump_012]    = "state:green:Heat pump"
-items[switch1]         = "state:red:Light switch"
-
-;Item 1: Line graph of item "outdoortemp_008" with blue line color and title "Outdoor temperature"
-
-;Item 2: Show ON/OFF state of item "heatpump_012" with green bar color and title "Heat pump".
-;        All state items are drawn in the the graph with same height and in the order they are configured.
-;        As in this configuration if both state items are ON item 3 is drawn on top of item 2 and you
-;        can only see item 3.
-
+items[item1] = "line:color:title:&deg;C"
+items[item2] = "state:color:title"
 
 ;# Rememeber to remove ".empty" after the file name when you're ready.

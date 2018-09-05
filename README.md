@@ -1,3 +1,4 @@
+
 ## OPJGraph - Easy charts for openHAB and MySQL ***[WIP]***
 
 ### Requirements (*Tested with*)
@@ -112,4 +113,6 @@ Licensed under The MIT License (MIT). See [LICENSE.txt](../blob/master/LICENSE.t
 
 ### Changelog
 
-Ver. 0.1 - First beta release
+Ver. 0.1 - 5.9.2018 
+- First beta release
+

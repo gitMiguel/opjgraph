@@ -1,6 +1,6 @@
 <?php
 /*
- * OPJGraph Easy charts for openHAB and MySQL
+ * OPJGraph - Easy charts for openHAB and MySQL
  *
  * @lastmodified   Wed Sep 05 2018
  * @license        The MIT License (MIT). See LICENSE.txt
@@ -18,15 +18,14 @@ $dbconf = "../config/database.ini";
 $chartconf = "../config/bar.ini";
 
 $opjgraph = new OPJGraph($dbconf, $chartconf);
-
 $charts = $opjgraph->getChartConfs();
 
 $starttime = date("Y-m-d H:i:s", mktime(0, 0, 0, date("m")  , date("d")-7, date("Y")));
 $endtime = date("Y-m-d H:i:s", mktime(23, 59, 59, date("m")  , date("d")-1, date("Y")));
 
-$plotarray = array();
 foreach ($charts as $chart) {
 
+	// New graph
 	$graph = new Graph($chart['sizev'], $chart['sizeh']);
 	$graph->clearTheme();
 	$graph->SetScale('textlin');
@@ -56,9 +55,7 @@ foreach ($charts as $chart) {
 			$average = array_sum($values) / count(array_filter($values));
 			$datay[] = $average;
 			$datax[] = $day;
-		}
-		//print_r($datax);
-	
+		}	
 		if ($data) {
 			$b = new BarPlot($datay);
 			$b->SetFillColor($params['color']);
@@ -66,8 +63,7 @@ foreach ($charts as $chart) {
 			$plotarray[] = $b;		
 		}
 		unset($data, $datay, $datax, $days, $values, $averages);
-	}
-	
+	}	
 }
 
 $gbarplot = new  GroupBarPlot($plotarray);
@@ -81,5 +77,4 @@ $graph->Stroke();
 } catch (Error $er) {
 	throw new JpGraphException($er);
 }
-
 ?>

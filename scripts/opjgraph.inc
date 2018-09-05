@@ -1,13 +1,12 @@
 <?php
 /*
- * OPJGraph Easy charts for openHAB and MySQL
+ * OPJGraph - Easy charts for openHAB and MySQL
  *
  * @lastmodified   Wed Sep 05 2018
  * @license        The MIT License (MIT). See LICENSE.txt
  * @author         Miika Jukka <miikajukka@gmail.com>
  * @version        0.1
  */
-
 
 class OPJGraph {
 
@@ -23,7 +22,7 @@ class OPJGraph {
         $this->connection = $this->connect();
     }
 
-    # Return chart configuration
+    # Return chart configurations
     public function getChartConfs() {
         return $this->charts;
     }
@@ -61,7 +60,6 @@ class OPJGraph {
                     } else {
                         $this->charts[$confsection][$key] = $value;
                     }
-
                 }
             }
         }
@@ -75,11 +73,6 @@ class OPJGraph {
             throw new Exception ($connection->connect_error);
         }
         return $connection;
-    }
-
-    # Close MySQL connection
-    public function close() {
-        $this->connection->close();
     }
 
     # Get item data from database
@@ -138,5 +131,4 @@ class OPJGraph {
         return gmdate("H:i:s", $total);
     }
 }
-
 ?>

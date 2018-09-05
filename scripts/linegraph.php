@@ -1,6 +1,6 @@
 <?php
 /*
- * OPJGraph Easy charts for openHAB and MySQL
+ * OPJGraph - Easy charts for openHAB and MySQL
  *
  * @lastmodified   Wed Sep 05 2018
  * @license        The MIT License (MIT). See LICENSE.txt
@@ -20,7 +20,6 @@ $dbconf = "../config/database.ini";
 $chartconf = "../config/line.ini";
 
 $opjgraph = new OPJGraph($dbconf, $chartconf);
-
 $charts = $opjgraph->getChartConfs();
 
 // Get parameters
@@ -47,7 +46,6 @@ if ($period == "last24h") {
 	$endtime = date("Y-m-d") . " 23:59:59";
 	$istoday= true;
 }
-
 foreach ($charts as $chart) {
 	
 	//New graph
@@ -65,7 +63,7 @@ foreach ($charts as $chart) {
 	$graph->legend->SetColumns($chart['legendcols']);
 
 	// Title 
-	$graph->title->Set($chart['title']); // . " " . date("Y.m.d", strtotime($endtime)));
+	$graph->title->Set($chart['title']);
 	$graph->title->SetFont(FF_DV_SERIF, FS_BOLD, 14);
 	$graph->title->SetMargin(10);
 
@@ -94,8 +92,7 @@ foreach ($charts as $chart) {
 				$value++;
 			}
 			$datay[] = $value;			
-		}
-	
+		}	
 		if ($data) {
 			$p = new LinePlot($datay , $datax);
 			$p->SetColor($params['color']);
@@ -109,14 +106,12 @@ foreach ($charts as $chart) {
 		}
 		unset($data, $datax, $datay);
 	}
-
 	if ($chart['drawtofile']) {
 		$graph->Stroke($chart['drawtofile']);
 	} else {
 		$graphs[] = $graph;
 	}
 }
-
 if (count($graphs) == 1) {
 	$graphs[0]->Stroke();
 } elseif (count($graphs) > 1) {
@@ -140,5 +135,4 @@ if (count($graphs) == 1) {
 } catch (Error $er) {
 	throw new JpGraphException($er);
 }
-
 ?>
