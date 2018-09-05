@@ -47,7 +47,6 @@ foreach ($charts as $chart) {
 		foreach ($data as $time => $value) {
 			$days[date("d.m", $time)][] = $value;
 		}
-		//print_r($days);
 		foreach ($days as $day => $value) {
 			$values = array_values($value);
 			$average = array_sum($values) / count(array_filter($values));
@@ -64,7 +63,7 @@ foreach ($charts as $chart) {
 		}
 		unset($data, $datay, $days, $values, $averages);
 	}
-	
+		
 	// Y- and X-axis
 	$graph->yaxis->title->Set($chart['yaxistitle']); 
 	$graph->xaxis->SetTickLabels($datax);
