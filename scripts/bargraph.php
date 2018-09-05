@@ -1,4 +1,12 @@
-<?php // content="image/png""
+<?php
+/*
+ * OPJGraph Easy charts for openHAB and MySQL
+ *
+ * @lastmodified   Wed Sep 05 2018
+ * @license        The MIT License (MIT). See LICENSE.txt
+ * @author         Miika Jukka <miikajukka@gmail.com>
+ * @version        0.1
+ */
 
 try {
 
@@ -6,7 +14,10 @@ require_once ('src/jpgraph.php');
 require_once ('src/jpgraph_bar.php');
 require_once ('opjgraph.inc');
  
-$opjgraph = new OPJGraph('../config/bar.ini');
+$dbconf = "../config/database.ini";
+$chartconf = "../config/bar.ini";
+
+$opjgraph = new OPJGraph($dbconf, $chartconf);
 
 $charts = $opjgraph->getChartConfs();
 

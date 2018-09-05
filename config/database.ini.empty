@@ -7,18 +7,13 @@
 ; * @version        0.1
 ; */
 
-[chart1]
 
-title = Your title
-sizev = 1000
-sizeh = 600
-showlegend = true
-legendcols = 4
-legendunit = "&deg;C"
-yaxistitle = "&deg;C"
-drawtofile = false
+[database]
 
-items[outdoortemp_001] = "line:blue:Outdoor temperature"
-items[indoortemp_006]  = "line:green:Heat pump"
+host    = your.database.com:3306
+name    = mydatabase
+uname   = user1
+pw      = verysecretpassword
+timetable = outdoortemp_001
 
 ;# Rememeber to remove ".empty" after the file name when you're ready.

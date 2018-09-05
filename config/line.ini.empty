@@ -1,38 +1,27 @@
-;#################################################
-;#
-;# OPJGraph - Ver 0.1
-;#
-;# Configuration file for line graph
-;#
-;#################################################
+;/*
+; * OPJGraph Easy charts for openHAB and MySQL
+; *
+; * @lastmodified   Wed Sep 05 2018
+; * @license        The MIT License (MIT). See LICENSE.txt
+; * @author         Miika Jukka <miikajukka@gmail.com>
+; * @version        0.1
+; */
 
 
-[database] ; Database configuration
+[chart1]
 
-dbhost = your.database.com:3306 ;Database host
-dbname = mydatabase             ;Database name
-dbuname = user1                 ;Database username
-dbpw = verysecretpassword       ;Database password
-timetable = outdoortemp_001     ;Table name where to get all dates for saved data.
-timecolumn = time               ;Column name for time values
+title = Your title
+sizev = 1000
+sizeh = 600
+showlegend = true
+legendcols = 4
+legendunit = "&deg;C"
+yaxistitle = "&deg;C"
+drawtofile = false
 
-[chart] ; Chart Configuration
-
-title = Your title      ;Title of your graph
-sizev = 1000            ;Vertical size of image
-sizeh = 600             ;Horizonal size of image
-showlegend = true       ;Wether to show legend box under chart
-legendcols = 4          ;How many columns to have in legend box
-legendunit = "&deg;C"   ;Text/unit to display after value in legend box
-yaxistitle = "&deg;C"   ;Title for Y-axis
-drawtofile = false      ;Draw to a specified file in /scripts directory.
-                        ;"false" to draw in browser
-
-[items] ; Item configuration
-
-line[] = "line:outdoortemp_001:blue:Outdoor temperature:&deg;C" ;Item 1
-line[] = state:heatpump_012:green:Heat pump                     ;Item 2
-line[] = state:switch1:red:Light switch                         ;Item 3
+items[outdoortemp_001] = "line:blue:Outdoor temperature:&deg;C"
+items[heatpump_012]    = "state:green:Heat pump"
+items[switch1]         = "state:red:Light switch"
 
 ;Item 1: Line graph of item "outdoortemp_008" with blue line color and title "Outdoor temperature"
 

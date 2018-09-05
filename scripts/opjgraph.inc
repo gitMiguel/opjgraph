@@ -1,4 +1,13 @@
 <?php
+/*
+ * OPJGraph Easy charts for openHAB and MySQL
+ *
+ * @lastmodified   Wed Sep 05 2018
+ * @license        The MIT License (MIT). See LICENSE.txt
+ * @author         Miika Jukka <miikajukka@gmail.com>
+ * @version        0.1
+ */
+
 
 class OPJGraph {
 
@@ -6,8 +15,11 @@ class OPJGraph {
             $charts,
             $connection;
 
-    public function __construct($filename) {
-        $this->parseConfig($filename);
+    public function __construct($database, $chartsconf) {
+        $this->parseConfig($database);
+        if ($chartsconf) {
+            $this->parseConfig($chartsconf);
+        }
         $this->connection = $this->connect();
     }
 
@@ -53,15 +65,12 @@ class OPJGraph {
                 }
             }
         }
-        if (!$this->charts) {
-            throw new InvalidArgumentException ("No chart settings found.");
-        }
     }
 
     # Create MySQL connection
     function connect() {
-        $connection = new mysqli($this->dbconf['dbhost'], $this->dbconf['dbuname'],
-                                       $this->dbconf['dbpw'], $this->dbconf['dbname']);
+        $connection = new mysqli($this->dbconf['host'], $this->dbconf['uname'],
+                                       $this->dbconf['pw'], $this->dbconf['name']);
         if ($connection->connect_errno) {
             throw new Exception ($connection->connect_error);
         }
