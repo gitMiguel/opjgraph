@@ -1,3 +1,4 @@
 *.ini
 .vscode
+.Trash-1000/*
 *.png
