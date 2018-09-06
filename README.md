@@ -1,20 +1,21 @@
 
-## OPJGraph - Easy charts for openHAB and MySQL ***[WIP]***
+## OPJGraph - Easy charts for openHAB and MySQL
 
-### Requirements (*Tested with*)
+### Requirements
 
-- Web server with PHP and GD support (Apache 2 + PHP 7)
-- JpGraph library (4.2.2)
-- OH MySQL Persistece
+- Web server with PHP or PHP-Cli
+- GD support for PHP
+- JpGraph library
+- openHAB with MySQL Persistece
 
 
 ### Features
 
-- View charts as images directly in your browser or in your sitemap. 
-- Use "linegraph.php" or "bargraph.php" to draw images for current day and display them in your sitemap.
+- View graphs as images directly in your browser or link them in your sitemap as image items. 
+- Call "linegraph.php" or "bargraph.php" from the command line to draw graphs straight to images in your desired location. 
 
 
-#### Line graph
+#### Line graph - linegraph.php
 
 - Time frame is 24 hours.
 - Items with number values are drawn as line.
@@ -26,13 +27,13 @@
     * *yyyy-mm-dd -  Historical data of specified date e.g. 2018-08-25. 
 
 
-#### Bar graph
+#### Bar graph - bargraph.php
 
 - Time frame is one week and is drawn as a grouped bar plot. One bar is an items average value per day.
 - Only number items are supported.
 
 
-#### Web page - index.php + opjgraph.js
+#### Web page - index.php + opjgraph.js + dates.php
 
 - Simple web page to show configured graphs and access historical data.
 - Selection elements for picking a date.
@@ -40,6 +41,11 @@
 
 
 ## Configuration
+
+### JpGraph
+
+- Install the JpGraph library as advised in [documentation.](https://jpgraph.net/download/manuals/chunkhtml/ch03s03.html)
+- Remember to setup *include_path* for JpGraph in your *php.ini*. 
 
 
 ### Configuration file descriptions
@@ -71,12 +77,12 @@
 |yaxistitle         | "Celsius"                 | Title for Y-axis                               |
 |drawtofile         | false                     | Draw to a file. *false*/*"graph.png"*          |
 |                   |                           |                                                |
-|items[*yourlineitem*]  | "line:blue:Outdoor temperature:&deg;C" | Line item with *blue* color and legend title *Outdoor temperature*. |
+|items[*yourlineitem*]  | "line:blue:Outdoor temperature:&deg;C" | Number item with *blue* color and legend title *Outdoor temperature*. |
 |items[*yourstateitem*] | "state:green:Heat pump" | State item with *green* color and legen title *Heat pump*. |
 
 - items[*yourlineitem*] - Item name in the square brackets *[ ]* as it is in your database. 
 
-### Bar graph - bar.ini
+#### Bar graph - bar.ini
 
 | Setting           | Example value             | Description                                   |
 | ----------------- |:------------------------- |:--------------------------------------------- |
@@ -96,7 +102,7 @@
 
 ### Security
 
-As opjgraph.ini file contains your database username and password remember to set up your web server not to allow direct view of .ini files.
+As *database.ini* file contains your database username and password remember to set up your web server not to allow direct view of .ini files.
 
 For example here's Apache's configuration section to hide all .ini and .inc files:
 
@@ -111,8 +117,18 @@ For example here's Apache's configuration section to hide all .ini and .inc file
 
 Licensed under The MIT License (MIT). See [LICENSE.txt](../blob/master/LICENSE.txt)
 
+
 ### Changelog
+
+Ver. 0.2.0 - 6.9.2018
+- Call graph scripts from command line
 
 Ver. 0.1 - 5.9.2018 
 - First beta release
 
+
+### Links
+
+- [JpGraph - Most powerful PHP-driven charts](https://jpgraph.net/) / [Documentation](https://jpgraph.net/download/manuals/chunkhtml/)
+- [openHAB - Empowering the smart home](https://www.openhab.org/) / [MySQL Persistence](https://www.openhab.org/addons/persistence/jdbc/#table-of-contents)
+- [PHP](http://php.net/) / [GD Support](http://php.net/manual/en/book.image.php)
