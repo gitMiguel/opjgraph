@@ -13,6 +13,8 @@ try {
 require_once ('src/jpgraph.php');
 require_once ('src/jpgraph_bar.php');
 require_once ('opjgraph.inc');
+
+if (!http_response_code()) JpGraphError::SetImageFlag(false);
  
 $dbconf = "../config/database.ini";
 $chartconf = "../config/bar.ini";
@@ -76,8 +78,8 @@ $graph->Stroke();
 } catch (JpGraphException $jge) {
 	$jge->Stroke();
 } catch (Exception $ex) {
-	throw new JpGraphException($ex);
+	throw new JpGraphException($ex->getMessage() . "\n");
 } catch (Error $er) {
-	throw new JpGraphException($er);
+	throw new JpGraphException($er->getMessage() . "\n");
 }
 ?>
