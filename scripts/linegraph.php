@@ -16,6 +16,8 @@ require_once ('src/jpgraph_date.php');
 require_once ('src/jpgraph_mgraph.php');
 require_once ('opjgraph.inc');
 
+if (!http_response_code()) JpGraphError::SetImageFlag(false);
+
 $dbconf = "../config/database.ini";
 $chartconf = "../config/line.ini";
 
@@ -131,8 +133,8 @@ if (count($graphs) == 1) {
 } catch (JpGraphException $jge) {
 	$jge->Stroke();
 } catch (Exception $ex) {
-	throw new JpGraphException($ex);
+	throw new JpGraphException($ex->getMessage() . "\n");
 } catch (Error $er) {
-	throw new JpGraphException($er);
+	throw new JpGraphException($er->getMessage() . "\n");
 }
 ?>

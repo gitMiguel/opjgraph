@@ -45,7 +45,6 @@ class OPJGraph {
                 foreach ($value as $key => $value) {
                     if (is_array($value)) {
                         foreach($value as $name => $value) {
-                            //var_dump($name);
                             $values = explode(":", $value);
                             if (count($values) > 4 || count($values) < 3 || (array_search("", $values) != false)) {
                                 throw new InvalidArgumentException ("Error in item settings.");
