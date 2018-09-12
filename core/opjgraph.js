@@ -6,7 +6,7 @@ var selectedDay = new Date().getDate();
 
 function loadPicture(time) {
     var xmlhttp = new XMLHttpRequest();
-    var url = "scripts/linegraph.php?period=" + time;
+    var url = "line.php?period=" + time;
 
     xmlhttp.open("GET",url,true);
     xmlhttp.responseType = 'arraybuffer';
@@ -15,7 +15,7 @@ function loadPicture(time) {
         var blob = new Blob( [ arrayBufferView ], { type: "image/jpeg" } );
         var urlCreator = window.URL || window.webkitURL;
         var imageUrl = urlCreator.createObjectURL( blob );
-        var img = document.querySelector( "#graph" );
+        var img = document.querySelector( "#linegraph" );
         img.src = imageUrl;
     };
     xmlhttp.send();

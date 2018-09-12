@@ -7,40 +7,34 @@
  * 
  */
 
+require_once "database.inc";
+
 class OPJGraph {
+
+    public  $database;
 
     private $dbconf,
             $charts,
             $connection;
 
-    public function __construct($database, $chartsconf) {
-        $this->parseConfig($database);
-        if ($chartsconf) {
-            $this->parseConfig($chartsconf);
-        }
-        $this->connection = $this->connect();
+    public function __construct($chartsconf) {
+        $this->$database = new Database("../config/database.ini");
+        $this->parseConfig($chartsconf);
     }
 
-    # Return chart configurations
+    // Return chart configurations
     public function getChartConfs() {
         return $this->charts;
     }
 
-    # Parse configuration file
+    // Parse configuration file
     private function parseConfig($filename) {
         $config = parse_ini_file($filename, true);
         if (!$config) {
             throw new Exception ("Error reading configuration file");
         }
         foreach ($config as $confsection => $value) {
-            if ($confsection == 'database') {
-                foreach ($value as $key => $value) {
-                    if (empty($value)){
-                        throw new InvalidArgumentException ("Error in database settings. Missing value for " . $key);
-                    }
-                    $this->dbconf[$key] = $value;
-                }
-            } elseif (preg_match("/\bchart.\b/", $confsection)) {
+            if (preg_match("/\bchart.\b/", $confsection)) {
                 foreach ($value as $key => $value) {
                     if (is_array($value)) {
                         foreach($value as $name => $value) {
@@ -63,45 +57,7 @@ class OPJGraph {
         }
     }
 
-    # Create MySQL connection
-    function connect() {
-        $connection = new mysqli($this->dbconf['host'], $this->dbconf['uname'],
-                                       $this->dbconf['pw'], $this->dbconf['name']);
-        if ($connection->connect_errno) {
-            throw new Exception ($connection->connect_error);
-        }
-        return $connection;
-    }
-
-    # Get item data from database
-    function getItemData($item,  $starttime, $endtime) {
-        $query = "SELECT * FROM " . $item . " WHERE (time BETWEEN '" . $starttime . "' AND '" . $endtime . "')";
-        $data = array();
-
-	    if ($result = $this->connection->query($query)) {
-		    while($row = $result->fetch_assoc()){
-			    $data[strtotime($row["time"])] = $row["value"];
-		    }
-		    $result->free();
-	    }
-        return $data;
-    }
-
-    # Fetch distinct dates from MySQL and return multidimesional array of dates
-    function getDatesFromDb() {
-        $query = "SELECT DISTINCT YEAR(time) AS year, MONTH(time) AS month, DAY(time) AS day FROM " . $this->dbconf['timetable'];
-        $calendar = array();
-    
-        if ($result = $this->connection->query($query)) {
-             while($row = $result->fetch_assoc()) {
-	    		$calendar[$row["year"]][$row["month"]][$row["day"]] = $row["day"];
-	    	}
-	    	$result->free();
-        }
-        return $calendar;
-    }
-
-    # Construct legend string
+    // Construct legend string
     function createLegend($params, $istoday, $data) {
         $values = array_values($data);
         $string = $params['title'] . " ";
@@ -114,7 +70,7 @@ class OPJGraph {
         return $string;
     }
 
-    # Calculate ON time for state item
+    // Calculate ON time for state item
     function calculateOnTime($data) {
         $total = 0;
         $start = 0; 

@@ -13,18 +13,21 @@ require_once ('src/jpgraph.php');
 require_once ('src/jpgraph_bar.php');
 require_once ('opjgraph.inc');
 
-if (!http_response_code()) JpGraphError::SetImageFlag(false);
- 
-$dbconf = "../config/database.ini";
+// Defaults
 $chartconf = "../config/bar.ini";
-
-$opjgraph = new OPJGraph($dbconf, $chartconf);
-$charts = $opjgraph->getChartConfs();
-
 $starttime = date("Y-m-d H:i:s", mktime(0, 0, 0, date("m")  , date("d")-7, date("Y")));
 $endtime = date("Y-m-d H:i:s", mktime(23, 59, 59, date("m")  , date("d")-1, date("Y")));
 
+if (!http_response_code()) JpGraphError::SetImageFlag(false);
+
+$opjgraph = new OPJGraph($chartconf);
+$charts = $opjgraph->getChartConfs();
+
+if (isset($chart))
+
 foreach ($charts as $chart) {
+
+	if (isset($chart['period'])) $starttime = date("Y-m-d H:i:s", mktime(0, 0, 0, date("m"), date("d") - $chart['period'], date("Y")));
 
 	// New graph
 	$graph = new Graph($chart['sizev'], $chart['sizeh']);
@@ -43,7 +46,7 @@ foreach ($charts as $chart) {
 	// MySQL query and graph creation
 	foreach ($chart['items'] as $item => $params) {
 	
-		$data = $opjgraph->getItemData($item, $starttime, $endtime);
+		$data = $opjgraph->database->getItemData($item, $starttime, $endtime);
 
 		foreach ($data as $time => $value) {
 			$days[date("d.m", $time)][] = $value;

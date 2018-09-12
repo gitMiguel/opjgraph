@@ -8,6 +8,7 @@
 
 [database]
 
+type    = mysql
 host    = your.database.com:3306
 name    = mydatabase
 uname   = user1

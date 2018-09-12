@@ -15,21 +15,20 @@ require_once ('src/jpgraph_date.php');
 require_once ('src/jpgraph_mgraph.php');
 require_once ('opjgraph.inc');
 
+// Defaults
+$chartconf = "../config/line.ini";
+$starttime = date("Y-m-d") . " 00:00:00";
+$endtime = date("Y-m-d") . " 23:59:59";
+$period = "today";
+$istoday= true;
+
 if (!http_response_code()) JpGraphError::SetImageFlag(false);
 
-$dbconf = "../config/database.ini";
-$chartconf = "../config/line.ini";
-
-$opjgraph = new OPJGraph($dbconf, $chartconf);
+$opjgraph = new OPJGraph($chartconf);
 $charts = $opjgraph->getChartConfs();
 
 // Get parameters
-if (!isset($_GET["period"])) {
-	$period = "today";
-	$istoday = true;
-} else {
-	$period = $_GET["period"];
-}
+if (isset($_GET["period"])) $period = htmlspecialchars($_GET["period"]);
 
 if ($period == "last24h") {
 	$starttime = date("Y-m-d H:i:s", mktime(date("H")+1, 0, 0, date("m")  , date("d")-1, date("Y")));
@@ -41,12 +40,8 @@ if ($period == "last24h") {
 	$starttime = date("Y-m-d H:i:s", mktime(0, 0, 0, $time[1], $time[2], $time[0]));
 	$endtime = date("Y-m-d H:i:s", mktime(23, 59, 59, $time[1], $time[2], $time[0]));
 	$istoday = false;
-
-} else {
-	$starttime = date("Y-m-d") . " 00:00:00";
-	$endtime = date("Y-m-d") . " 23:59:59";
-	$istoday= true;
 }
+
 foreach ($charts as $chart) {
 	
 	//New graph
@@ -85,7 +80,7 @@ foreach ($charts as $chart) {
 	// MySQL query and graph creation
 	foreach ($chart['items'] as $item => $params) {
 
-		$data = $opjgraph->getItemData($item, $starttime, $endtime);
+		$data = $opjgraph->database->getItemData($item, $starttime, $endtime);
 
 		foreach ($data as $time => $value) {
 			$datax[] = $time;
@@ -121,7 +116,7 @@ if (count($graphs) == 1) {
 	$i = 0;
 	for($i = 0; $i < count($graphs); ++$i) {
 		$mgraph->AddMix($graphs[$i],0,$yoffset);
-		$yoffset += $chart['sizeh'];
+		$yoffset += $chart['sizeh'] + 10;
 	}
 	$mgraph->Stroke();
 } elseif (count($graphs) == 0) {

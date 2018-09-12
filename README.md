@@ -55,12 +55,14 @@
 
 | Setting           | Example value             | Description                                       |
 | ----------------- |:------------------------- |:------------------------------------------------- |
-|host               | your.database.com:3306    | Database host                                     |
-|name               | mydatabase                | Database name                                     |
-|uname              | user1                     | Database username                                 |
-|pw                 | verysecretpassword        | Database password                                 |
-|timetable          | outdoortemp_001           | Table name where to get all dates for saved data. |
+| type              | mysql                     | Type of database                                  |
+| host              | your.database.com:3306    | Database host                                     |
+| name              | mydatabase                | Database name                                     |
+| uname             | user1                     | Database username                                 |
+| pw                | verysecretpassword        | Database password                                 |
+| timetable         | outdoortemp_001           | Table name where to get all dates for saved data. |
 
+- *type* - At this time only MySQL database is supported
 - *timetable* - This is only used for *dates.php* to get distinct dates from your database.
 
 
@@ -86,16 +88,17 @@
 
 | Setting           | Example value             | Description                                   |
 | ----------------- |:------------------------- |:--------------------------------------------- |
-|title              | My chart title            | Title of your graph.                          |
-|sizev              | 1000                      | Vertical size of image                        |
-|sizeh              | 600                       | Horizonal size of image                       |
-|showlegend         | true                      | Wether to show legend box under chart         |
-|legendcols         | 4                         | How many columns to have in legend box        |
-|yaxistitle         | "Celsius"                 | Title for Y-axis                              |
-|drawtofile         | false                     | Draw to a file. *false*/*"graph.png"*         |
+| title             | My chart title            | Title of your graph.                          |
+| sizev             | 1000                      | Vertical size of image                        |
+| sizeh             | 600                       | Horizonal size of image                       |
+| period            | 7                         | How many days to show in chart
+| showlegend        | true                      | Wether to show legend box under chart         |
+| legendcols        | 4                         | How many columns to have in legend box        |
+| yaxistitle        | "Celsius"                 | Title for Y-axis                              |
+| drawtofile        | false                     | Draw to a file. *false*/*"graph.png"*         |
 |                   |                           |                                               |
-|items[*yourbaritem*] | "lightblue:Indoor temperature" | Bar with *lightblue* color and legend title *Indoor temperature* |
-|items[*yourbaritem*] | "lightgreen:Outdoor temperature" | Bar with *lightgreen* color and legend title *Outdoor temperature* |
+| items[*yourbaritem*] | "lightblue:Indoor temperature" | Bar with *lightblue* color and legend title *Indoor temperature* |
+| items[*yourbaritem*] | "lightgreen:Outdoor temperature" | Bar with *lightgreen* color and legend title *Outdoor temperature* |
 
 - items[*yourbaritem*] - Item name in the square brackets *[ ]* as it is in your database.
 
