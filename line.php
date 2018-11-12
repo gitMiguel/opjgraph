@@ -13,10 +13,10 @@ require_once ('src/jpgraph.php');
 require_once ('src/jpgraph_line.php');
 require_once ('src/jpgraph_date.php');
 require_once ('src/jpgraph_mgraph.php');
-require_once ('opjgraph.inc');
+require_once ('core/opjgraph.inc');
 
 // Defaults
-$chartconf = "../config/line.ini";
+$chartconf = "config/line.ini";
 $starttime = date("Y-m-d") . " 00:00:00";
 $endtime = date("Y-m-d") . " 23:59:59";
 $period = "today";
