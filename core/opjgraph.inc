@@ -7,7 +7,7 @@
  * 
  */
 
-require_once "database.inc";
+require_once 'database.inc';
 
 class OPJGraph {
 
@@ -18,7 +18,7 @@ class OPJGraph {
             $connection;
 
     public function __construct($chartsconf) {
-        $this->$database = new Database("../config/database.ini");
+        $this->database = new Database("./config/database.ini");
         $this->parseConfig($chartsconf);
     }
 

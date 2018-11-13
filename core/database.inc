@@ -15,7 +15,7 @@ class Database {
 
     public function __construct($db_conf_file) {
         $this->parseConfig($db_conf_file);
-        $this->createConnection($type);
+        $this->createConnection($this->type);
     }
 
     // Parse configuration file
@@ -30,7 +30,7 @@ class Database {
                     if (empty($value)){
                         throw new Exception("Error in database settings. Missing value for " . $key);
                     } elseif ($key == "type") {
-                        $this->type = $key;
+                        $this->type = $value;
                     } else {
                         $this->db_conf[$key] = $value;
                     }
@@ -49,6 +49,8 @@ class Database {
             if ($connection->connect_errno) {
                 throw new Exception($connection->connect_error);
             }
+        } else {
+            throw new Exception("Unsupported database");
         }
         $this->connection = $connection;
     }
