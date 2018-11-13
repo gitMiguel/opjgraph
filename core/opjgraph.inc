@@ -7,7 +7,7 @@
  * 
  */
 
-require_once "database.inc";
+require_once 'database.inc';
 
 class OPJGraph {
 
