@@ -12,10 +12,10 @@
 ### Features
 
 - View graphs as images directly in your browser or link them in your sitemap as image items. 
-- Call "linegraph.php" or "bargraph.php" from the command line to draw graphs straight to images in your desired location. 
+- Call "line.php" or "bar.php" from the command line to draw graphs straight to images in your desired location. 
+- Call scripts through web page but draw them to file specified in configuration file
 
-
-#### Line graph - linegraph.php
+#### Line graph - line.php
 
 - Time frame is 24 hours.
 - Items with number values are drawn as line.
@@ -27,7 +27,7 @@
     * *yyyy-mm-dd -  Historical data of specified date e.g. 2018-08-25. 
 
 
-#### Bar graph - bargraph.php
+#### Bar graph - bar.php
 
 - Time frame is one week and is drawn as a grouped bar plot. One bar is an items average value per day.
 - Only number items are supported.
@@ -55,12 +55,14 @@
 
 | Setting           | Example value             | Description                                       |
 | ----------------- |:------------------------- |:------------------------------------------------- |
-|host               | your.database.com:3306    | Database host                                     |
-|name               | mydatabase                | Database name                                     |
-|uname              | user1                     | Database username                                 |
-|pw                 | verysecretpassword        | Database password                                 |
-|timetable          | outdoortemp_001           | Table name where to get all dates for saved data. |
+| type              | mysql                     | Type of database                                  |
+| host              | your.database.com:3306    | Database host                                     |
+| name              | mydatabase                | Database name                                     |
+| uname             | user1                     | Database username                                 |
+| pw                | verysecretpassword        | Database password                                 |
+| timetable         | outdoortemp_001           | Table name where to get all dates for saved data. |
 
+- *type* - At this time only MySQL database is supported
 - *timetable* - This is only used for *dates.php* to get distinct dates from your database.
 
 
@@ -75,7 +77,7 @@
 |legendcols         | 4                         | How many columns to have in legend box         |
 |legendunit         | "&deg;C"                  | Text/unit to display after value in legend box |
 |yaxistitle         | "Celsius"                 | Title for Y-axis                               |
-|drawtofile         | false                     | Draw to a file. *false*/*"graph.png"*          |
+|drawtofile         | false  / "imagename.png"  | Draw to a file.                                |
 |                   |                           |                                                |
 |items[*yourlineitem*]  | "line:blue:Outdoor temperature:&deg;C" | Number item with *blue* color and legend title *Outdoor temperature*. |
 |items[*yourstateitem*] | "state:green:Heat pump" | State item with *green* color and legen title *Heat pump*. |
@@ -86,16 +88,17 @@
 
 | Setting           | Example value             | Description                                   |
 | ----------------- |:------------------------- |:--------------------------------------------- |
-|title              | My chart title            | Title of your graph.                          |
-|sizev              | 1000                      | Vertical size of image                        |
-|sizeh              | 600                       | Horizonal size of image                       |
-|showlegend         | true                      | Wether to show legend box under chart         |
-|legendcols         | 4                         | How many columns to have in legend box        |
-|yaxistitle         | "Celsius"                 | Title for Y-axis                              |
-|drawtofile         | false                     | Draw to a file. *false*/*"graph.png"*         |
+| title             | My chart title            | Title of your graph.                          |
+| sizev             | 1000                      | Vertical size of image                        |
+| sizeh             | 600                       | Horizonal size of image                       |
+| period            | 7                         | How many days to show in chart                |
+| showlegend        | true                      | Wether to show legend box under chart         |
+| legendcols        | 4                         | How many columns to have in legend box        |
+| yaxistitle        | "Celsius"                 | Title for Y-axis                              |
+| drawtofile        | false  / "imagename.png"  | Draw to a file.                               |
 |                   |                           |                                               |
-|items[*yourbaritem*] | "lightblue:Indoor temperature" | Bar with *lightblue* color and legend title *Indoor temperature* |
-|items[*yourbaritem*] | "lightgreen:Outdoor temperature" | Bar with *lightgreen* color and legend title *Outdoor temperature* |
+| items[*yourbaritem*] | "lightblue:Indoor temperature" | Bar with *lightblue* color and legend title *Indoor temperature* |
+| items[*yourbaritem*] | "lightgreen:Outdoor temperature" | Bar with *lightgreen* color and legend title *Outdoor temperature* |
 
 - items[*yourbaritem*] - Item name in the square brackets *[ ]* as it is in your database.
 

@@ -11,6 +11,7 @@
 title = Your title
 sizev = 1000
 sizeh = 600
+period = 7
 showlegend = true
 legendcols = 4
 legendunit = "&deg;C"

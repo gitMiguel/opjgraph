@@ -10,9 +10,9 @@
 }
 </style>
 <head>
-    <?php include("scripts/dates.php"); ?>
+    <?php include("core/dates.php"); ?>
     <script type="text/javascript"> var calendar = <?php echo json_encode($calendar); ?>; </script>
-    <script type="text/javascript" src="scripts/opjgraph.js"> </script>
+    <script type="text/javascript" src="core/opjgraph.js"> </script>
 </head>
 
 <body onload="loadPicture('today')">
@@ -46,12 +46,12 @@
     </table>
     <table border=0 align=center valign=middle>
         <td align=center valign=top>
-            <img id="graph"/>
+            <img id="linegraph"/>
         </td>
     </table>
     <table border=0 align=center valign=middle>
         <td>
-            <img src="scripts/bargraph.php"/>
+            <img src="bar.php"/>
         </td>
     </table>
 </body>

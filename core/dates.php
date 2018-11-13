@@ -9,10 +9,10 @@
 
 try {
 
-require_once ('opjgraph.inc');
+require_once 'database.inc';
 
-$opjgraph = new OPJGraph('./config/database.ini', false);
-$calendar = $opjgraph->getDatesFromDb();
+$database = new Database('./config/database.ini');
+$calendar = $database->getDatesFromDb();
 
 } catch (Exception $ex) {
 	//echo($ex);

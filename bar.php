@@ -9,22 +9,27 @@
 
 try {
 
-require_once ('src/jpgraph.php');
-require_once ('src/jpgraph_bar.php');
-require_once ('opjgraph.inc');
+require_once 'src/jpgraph.php';
+require_once 'src/jpgraph_bar.php';
+require_once 'core/opjgraph.inc';
 
-if (!http_response_code()) JpGraphError::SetImageFlag(false);
- 
-$dbconf = "../config/database.ini";
-$chartconf = "../config/bar.ini";
-
-$opjgraph = new OPJGraph($dbconf, $chartconf);
-$charts = $opjgraph->getChartConfs();
-
+// Defaults
+$chartconf = "config/bar.ini";
 $starttime = date("Y-m-d H:i:s", mktime(0, 0, 0, date("m")  , date("d")-7, date("Y")));
 $endtime = date("Y-m-d H:i:s", mktime(23, 59, 59, date("m")  , date("d")-1, date("Y")));
 
+if (!http_response_code()) {
+	JpGraphError::SetImageFlag(false);
+}
+
+$opjgraph = new OPJGraph($chartconf);
+$charts = $opjgraph->getChartConfs();
+
+$plotarray = array();
+
 foreach ($charts as $chart) {
+
+	if (isset($chart['period'])) $starttime = date("Y-m-d H:i:s", mktime(0, 0, 0, date("m"), date("d") - $chart['period'], date("Y")));
 
 	// New graph
 	$graph = new Graph($chart['sizev'], $chart['sizeh']);
@@ -43,7 +48,7 @@ foreach ($charts as $chart) {
 	// MySQL query and graph creation
 	foreach ($chart['items'] as $item => $params) {
 	
-		$data = $opjgraph->getItemData($item, $starttime, $endtime);
+		$data = $opjgraph->database->getItemData($item, $starttime, $endtime);
 
 		foreach ($data as $time => $value) {
 			$days[date("d.m", $time)][] = $value;
@@ -70,9 +75,17 @@ foreach ($charts as $chart) {
 	$graph->xaxis->SetTickLabels($datax);
 }
 
-$gbarplot = new  GroupBarPlot($plotarray);
+$gbarplot = new GroupBarPlot($plotarray);
 $graph->Add($gbarplot);
-$graph->Stroke();
+
+if ($chart['drawtofile']) {
+	$gdImgHandler = $graph->Stroke(_IMG_HANDLER);
+	$filepath = $chart['drawtofile'];
+	$graph->img->Stream($filepath);
+	throw new JpGraphException("Image drawn to file: " . $chart['drawtofile']);
+} else {
+	$graph->Stroke();
+}
 
 } catch (JpGraphException $jge) {
 	$jge->Stroke();
