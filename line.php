@@ -9,11 +9,11 @@
 
 try {
 
-require_once ('src/jpgraph.php');
-require_once ('src/jpgraph_line.php');
-require_once ('src/jpgraph_date.php');
-require_once ('src/jpgraph_mgraph.php');
-require_once ('core/opjgraph.inc');
+require_once 'src/jpgraph.php';
+require_once 'src/jpgraph_line.php';
+require_once 'src/jpgraph_date.php';
+require_once 'src/jpgraph_mgraph.php';
+require_once 'core/opjgraph.inc';
 
 // Defaults
 $chartconf = "config/line.ini";
@@ -21,14 +21,17 @@ $starttime = date("Y-m-d") . " 00:00:00";
 $endtime = date("Y-m-d") . " 23:59:59";
 $period = "today";
 $istoday= true;
+$is_cli = false;
 
-if (!http_response_code()) JpGraphError::SetImageFlag(false);
+if (!http_response_code()) {
+	$is_cli = true;
+	JpGraphError::SetImageFlag(false);
+} else {
+	if (isset($_GET["period"])) $period = htmlspecialchars($_GET["period"]);
+}
 
 $opjgraph = new OPJGraph($chartconf);
 $charts = $opjgraph->getChartConfs();
-
-// Get parameters
-if (isset($_GET["period"])) $period = htmlspecialchars($_GET["period"]);
 
 if ($period == "last24h") {
 	$starttime = date("Y-m-d H:i:s", mktime(date("H")+1, 0, 0, date("m")  , date("d")-1, date("Y")));
@@ -42,12 +45,14 @@ if ($period == "last24h") {
 	$istoday = false;
 }
 
+$graphs = array();
+
 foreach ($charts as $chart) {
 	
 	//New graph
 	$graph = new Graph($chart['sizev'], $chart['sizeh']);
 	$graph->clearTheme();
-	$graph->SetScale('datlin',0,90);
+	$graph->SetScale('datlin',$chart['valuemin'], $chart['valuemax']);
 	$graph->SetMargin(50,50,50,($chart['showlegend'] ? 130 : 50));
 	$graph->img->SetAntiAliasing(false);
 
@@ -71,10 +76,11 @@ foreach ($charts as $chart) {
 	}
 	$graph->xaxis->scale->SetDateFormat('H:i');
 	$graph->xaxis->scale->ticks->Set(60*60,30*60);
+	$graph->xaxis->SetPos('min');
+	$graph->xaxis->HideFirstTicklabel();
 
 	// Y-axis
 	$graph->yaxis->title->Set($chart['yaxistitle']);
-	$graph->yaxis->HideFirstTicklabel();
 	$graph->ygrid->Show(true, true);
 
 	// MySQL query and graph creation
@@ -85,7 +91,10 @@ foreach ($charts as $chart) {
 		foreach ($data as $time => $value) {
 			$datax[] = $time;
 			if ($params['type'] == 'state' && $value > 0) {
-				$value++;
+				$value += ($chart['valuemin'] + 1);
+			}
+			if ($params['type'] == 'state' && $value == 0) {
+				$value += $chart['valuemin'];
 			}
 			$datay[] = $value;			
 		}	
@@ -103,7 +112,9 @@ foreach ($charts as $chart) {
 		unset($data, $datax, $datay);
 	}
 	if ($chart['drawtofile']) {
-		$graph->Stroke($chart['drawtofile']);
+		$gdImgHandler = $graph->Stroke(_IMG_HANDLER);
+		$filepath = $chart['drawtofile'];
+		$graph->img->Stream($filepath);
 	} else {
 		$graphs[] = $graph;
 	}
@@ -120,7 +131,12 @@ if (count($graphs) == 1) {
 	}
 	$mgraph->Stroke();
 } elseif (count($graphs) == 0) {
-	throw new JpGraphException("No charts drawn. Check configuration");
+	if ($chart['drawtofile']) {
+		throw new JpGraphException("Image drawn to file: " . $chart['drawtofile']);
+	
+	} elseif (!$is_cli) {
+		throw new JpGraphException("No charts drawn. Check configuration");
+	}
 }
 
 
