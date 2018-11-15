@@ -55,6 +55,9 @@ class OPJGraph {
                 }
             }
         }
+        if (empty($this->charts)) {
+            throw new InvalidArgumentException ("Error parsing configuration file");
+        }
     }
 
     // Construct legend string

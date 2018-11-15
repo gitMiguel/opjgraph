@@ -28,7 +28,7 @@ class Database {
             if ($conf_section == 'database') {
                 foreach ($value as $key => $value) {
                     if (empty($value)){
-                        throw new Exception("Error in database settings. Missing value for " . $key);
+                        throw new Exception("Error in database settings. Missing value for \"" . $key . "\"");
                     } elseif ($key == "type") {
                         $this->type = $value;
                     } else {
@@ -37,12 +37,15 @@ class Database {
                 }
             }
         }
+        if (empty($this->db_conf)) {
+            throw new InvalidArgumentException ("Error parsing configuration file");
+        }
     }
 
     // Create connection
     public function createConnection($type) {
         if (!$type) {
-            throw new Exception("Database type not set");
+            throw new InvalidArgumentException ("Database type not set");
         } elseif ($type == "mysql") {
             $connection = new mysqli($this->db_conf['host'], $this->db_conf['uname'],
                                        $this->db_conf['pw'], $this->db_conf['name']);
@@ -50,7 +53,7 @@ class Database {
                 throw new Exception($connection->connect_error);
             }
         } else {
-            throw new Exception("Unsupported database");
+            throw new Exception("Unsupported database \"" . $type . "\"");
         }
         $this->connection = $connection;
     }
