@@ -17,6 +17,10 @@ require_once 'core/opjgraph.inc';
 $chartconf = "config/bar.ini";
 $starttime = date("Y-m-d H:i:s", mktime(0, 0, 0, date("m")  , date("d")-7, date("Y")));
 $endtime = date("Y-m-d H:i:s", mktime(23, 59, 59, date("m")  , date("d")-1, date("Y")));
+$margins = ["left" => 35,
+			"right" => 25,
+			"top" => 25,
+			"bottom" => 30];
 
 if (!http_response_code()) {
 	JpGraphError::SetImageFlag(false);
@@ -38,12 +42,34 @@ foreach ($charts as $chart) {
 	$graph->SetMargin(50,50,50,80);
  
 	// Legend
-	$graph->legend->SetPos(0.33,0.91,'left','top');
-	$graph->legend->SetColumns($chart['legendcols']);
+	if ($chart['showlegend']) {
+		$graph->legend->SetPos(0.33,0.925,'left','top');
+		$graph->legend->SetColumns($chart['legendcols']);
+		$margins['bottom'] = 70;
+	} else {
+		$graph->legend->Hide();
+	}
 
 	// Title
-	$graph->title->Set($chart['title']);
-	$graph->title->SetFont(FF_DV_SERIF, FS_BOLD, 14);
+	if ($chart['title']) {
+		$graph->title->Set($chart['title']);
+		$graph->title->SetFont(FF_DV_SERIF, FS_BOLD, 16);
+		$graph->title->SetMargin(15);		
+		$margins['top'] = 50;
+	}
+
+	// Y-Axis
+	if ($chart['yaxistitle']) {
+		$graph->yaxis->title->Set($chart['yaxistitle']);
+		$graph->ygrid->Show(true, true);
+		$margins['left'] = 45;
+	}
+
+	// Set margins
+	$graph->SetMargin($margins['left'],
+					  $margins['right'],
+					  $margins['top'],
+					  $margins['bottom']);
 
 	// MySQL query and graph creation
 	foreach ($chart['items'] as $item => $params) {
@@ -70,8 +96,7 @@ foreach ($charts as $chart) {
 		unset($data, $datay, $days, $values, $averages);
 	}
 		
-	// Y- and X-axis
-	$graph->yaxis->title->Set($chart['yaxistitle']); 
+	// X-axis 
 	$graph->xaxis->SetTickLabels($datax);
 }
 

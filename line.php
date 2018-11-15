@@ -22,6 +22,10 @@ $endtime = date("Y-m-d") . " 23:59:59";
 $period = "today";
 $istoday= true;
 $is_cli = false;
+$margins = ["left" => 35,
+			"right" => 30,
+			"top" => 20,
+			"bottom" => 30];
 
 if (!http_response_code()) {
 	$is_cli = true;
@@ -53,20 +57,23 @@ foreach ($charts as $chart) {
 	$graph = new Graph($chart['sizev'], $chart['sizeh']);
 	$graph->clearTheme();
 	$graph->SetScale('datlin',$chart['valuemin'], $chart['valuemax']);
-	$graph->SetMargin(50,50,50,($chart['showlegend'] ? 130 : 50));
-	$graph->img->SetAntiAliasing(false);
 
 	// Legend
-	if (!$chart['showlegend']) {
+	if ($chart['showlegend']) {
+		$graph->legend->SetPos(0.05,0.84,'left','top');
+		$graph->legend->SetColumns($chart['legendcols']);
+		$margins['bottom'] = 130;
+	} else {
 		$graph->legend->Hide();
 	}
-	$graph->legend->SetPos(0.05,0.84,'left','top');
-	$graph->legend->SetColumns($chart['legendcols']);
 
-	// Title 
-	$graph->title->Set($chart['title']);
-	$graph->title->SetFont(FF_DV_SERIF, FS_BOLD, 14);
-	$graph->title->SetMargin(10);
+	// Title
+	if ($chart['title']) {
+		$graph->title->Set($chart['title']);
+		$graph->title->SetFont(FF_DV_SERIF, FS_BOLD, 16);
+		$graph->title->SetMargin(15);
+		$margins['top'] = 50;
+	}
 
 	// X-axis
 	if ($period != "last24h") {
@@ -80,8 +87,17 @@ foreach ($charts as $chart) {
 	$graph->xaxis->HideFirstTicklabel();
 
 	// Y-axis
-	$graph->yaxis->title->Set($chart['yaxistitle']);
-	$graph->ygrid->Show(true, true);
+	if ($chart['yaxistitle']) {
+		$graph->yaxis->title->Set($chart['yaxistitle']);
+		$graph->ygrid->Show(true, true);
+		$margins['left'] = 45;
+	}
+
+	// Set margins
+	$graph->SetMargin($margins['left'],
+					  $margins['right'],
+					  $margins['top'],
+					  $margins['bottom']);
 
 	// MySQL query and graph creation
 	foreach ($chart['items'] as $item => $params) {
