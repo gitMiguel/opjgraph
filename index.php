@@ -10,7 +10,7 @@
 }
 </style>
 <head>
-    <?php include("core/dates.php"); ?>
+    <?php include("./core/dates.php"); ?>
     <script type="text/javascript"> var calendar = <?php echo json_encode($calendar); ?>; </script>
     <script type="text/javascript" src="core/opjgraph.js"> </script>
 </head>

@@ -15,8 +15,8 @@ $database = new Database('./config/database.ini');
 $calendar = $database->getDatesFromDb();
 
 } catch (Exception $ex) {
-	//echo($ex);
+	echo($ex);
 } catch (Error $er) {
-	//echo($er);
+	echo($er);
 }
 ?>
