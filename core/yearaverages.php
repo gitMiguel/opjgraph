@@ -9,10 +9,10 @@
 require_once 'database.inc';
 
 $database = new Database('../config/database.ini');
-$calendar = $database->getDatesFromDb();
+$data = $database->getYearAverages();
 
 header('Content-Type: application/json');
-echo json_encode($calendar);
+echo json_encode($data);
 
 $database->close();
 ?>

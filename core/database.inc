@@ -18,6 +18,11 @@ class Database {
         $this->createConnection($this->type);
     }
 
+    // Close connection
+    public function close() {
+        $this->connection->close();
+    }
+
     // Parse configuration file
     private function parseConfig($db_conf_file) {
         $config = parse_ini_file($db_conf_file, true);
@@ -66,7 +71,7 @@ class Database {
                 $query = "SELECT * FROM " . $item . " WHERE (time BETWEEN '" . $starttime . "' AND '" . $endtime . "')";
                 if ($result = $this->connection->query($query)) {
 		            while($row = $result->fetch_assoc()){
-			            $data[strtotime($row["time"])] = $row["value"];
+                        $data[] = $row;
 		            }
                     $result->free();
                 }
@@ -90,6 +95,23 @@ class Database {
                 break;
             }
         return $calendar;
+    }
+
+    // Fetch year averages
+    function getYearAverages() {
+        $data1 = array();
+        switch ($this->type) {
+            case "mysql":
+                $query = "SELECT time , AVG(value) as value FROM " . $this->db_conf['timetable'] . " GROUP BY YEAR(`time`), MONTH(`time`)";
+                if ($result = $this->connection->query($query)) {
+                    while($row = $result->fetch_assoc()) {
+	    		        $data1[] = $row;
+	    	        }
+	    	        $result->free();
+                }
+                break;
+            }
+        return $data1;
     }
 }
 ?>
